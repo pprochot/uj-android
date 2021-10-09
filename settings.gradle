@@ -1,0 +1,3 @@
+rootProject.name = 'uj_android'
+include 'basics'
+
