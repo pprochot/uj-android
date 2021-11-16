@@ -20,7 +20,7 @@ class MathExpressionBuilder {
     }
 
     fun addOperator(mathOperator: MathOperator) {
-        if (canAddMinusToNumber()) {
+        if (mathOperator == MathOperator.MINUS && canAddMinusToNumber()) {
             stringBuilder.append("-")
         } else if (stringBuilder.isNotEmpty() && !hasOperator()) {
             operator = mathOperator
@@ -65,7 +65,14 @@ class MathExpressionBuilder {
     }
 
     private fun doubleMathExpression(): MathExpression {
-        val indexOfOperator = stringBuilder.indexOf(operator!!.symbol)
+        val indexOfOperator: Int =
+            if (operator == MathOperator.MINUS &&
+                stringBuilder[0].toString() == MathOperator.MINUS.symbol
+            ) {
+                stringBuilder.indexOf(operator!!.symbol, 1)
+            } else {
+                stringBuilder.indexOf(operator!!.symbol)
+            }
         val firstNumber = stringBuilder.substring(0, indexOfOperator).toBigDecimal()
         val secondNumber = stringBuilder.substring(indexOfOperator + 1).toBigDecimal()
 
@@ -78,6 +85,9 @@ class MathExpressionBuilder {
     }
 
     private fun singleMathExpression(): MathExpression {
+        if (stringBuilder.length == 1 && stringBuilder[0] == '-') {
+            return SingleMathExpression(BigDecimal.ZERO)
+        }
         return SingleMathExpression(stringBuilder.toString().toBigDecimal())
     }
 
